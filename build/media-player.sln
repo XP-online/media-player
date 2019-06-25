@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "media-player", "media-player\media-player.vcxproj", "{7E4FCEA3-86AB-40A7-A65F-CCC93C43C1BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E4FCEA3-86AB-40A7-A65F-CCC93C43C1BD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7E4FCEA3-86AB-40A7-A65F-CCC93C43C1BD}.Debug|Win32.Build.0 = Debug|Win32
+		{7E4FCEA3-86AB-40A7-A65F-CCC93C43C1BD}.Release|Win32.ActiveCfg = Release|Win32
+		{7E4FCEA3-86AB-40A7-A65F-CCC93C43C1BD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EEBF4BF6-D10B-4C09-B300-702947C56210}
+	EndGlobalSection
+EndGlobal
