@@ -25,7 +25,7 @@ void decode_video_thread(PlayerContext* playerCtx) {
 			ret = avcodec_receive_frame(playerCtx->videoCodecCtx, pFrame);
 			if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
 				break;
-			// --------------------------- 计算视频时间戳------------------------------ //
+			// --------------------------- 计算视频时间戳 ------------------------------ //
 			double pts = 0; 
 			int64_t f_pts = pFrame->pts;
 			int64_t pkt_dts = pFrame->pkt_dts;
@@ -48,7 +48,7 @@ void decode_video_thread(PlayerContext* playerCtx) {
 			playerCtx->video_clk = pts; // 更新视频时间戳
 
 			// ---------------------------- 音视频同步 -------------------------- //
-			int64_t delay = (playerCtx->video_clk - playerCtx->audio_clk) * 1000; // 计算视频时间戳和音频的差距。因为这里的单位是微妙。所以*1000 转换成毫秒
+			int64_t delay = (playerCtx->video_clk - (playerCtx->audio_clk + playerCtx->audio_pts_duration)) * 1000; // 计算视频时间戳和音频的差距。因为这里的单位是微妙。所以*1000 转换成毫秒
 			if (delay > 0) { // delay大于0说明视频时间戳提前了，等待一段时间再显示视频。
 				SDL_Delay(delay);
 			}
@@ -122,10 +122,11 @@ void decode_audio_thread(PlayerContext* playerCtx) {
 			playerCtx->audio_pos = (Uint8*)playerCtx->out_buffer;
 			playerCtx->audio_len = playerCtx->out_buffer_size;
 		// -------------------------------- 更新音频时间戳 ----------------------------------- //
-			if (pFrame->pts != AV_NOPTS_VALUE) {
-				playerCtx->audio_clk = av_q2d(playerCtx->audio_stream->time_base) * pFrame->pts;
+			if (pFrame->pts != AV_NOPTS_VALUE) { 
+				playerCtx->audio_clk = av_q2d(playerCtx->audio_stream->time_base) * pFrame->pts; /* time_base 是一个分数 av_q2d是一个将分数转换成小数的函数。
+																									在此处是用pts乘以time_base得到时间戳 */
 			}
-			playerCtx->audio_pts_duration = pFrame->pkt_duration;
+			playerCtx->audio_pts_duration = av_q2d(playerCtx->audio_stream->time_base) * pFrame->pkt_duration; // 更新音频帧的持续时间
 			av_frame_unref(pFrame);
 		}
 		// ------------------------------ end ------------------------------------- //
@@ -149,9 +150,6 @@ void sdl_audio_callback(void* userdata, Uint8* stream, int len) {
 	SDL_MixAudio(stream, playerCtx->audio_pos, streamlen, SDL_MIX_MAXVOLUME); // 给系统要分配的控件赋值
 	playerCtx->audio_pos += streamlen; // 音频缓存的位置向前
 	playerCtx->audio_len -= streamlen; // 音频缓存去掉已经分配掉的大小
-
-	// 更新音频播放时间
-	playerCtx->audio_clk += streamlen / (playerCtx->audioCodecCtx->channels * 2 * playerCtx->audioCodecCtx->sample_rate);
 }
 
 // init_audio_parameters 初始化音频参数，重采样器所需的各项参数

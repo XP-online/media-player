@@ -38,7 +38,7 @@ public:
 	int				   au_stream_index;	    // 记录音频流的位置
 	double			   audio_clk;			// 当前音频时间
 	int64_t			   audio_pts;			// 记录当前已经播放音频的时间
-	int64_t			   audio_pts_duration;	// 记录当前已经播放音频的时间
+	double			   audio_pts_duration;	// 记录当前已经播放音频的时间
 	Uint8*			   audio_pos;			// 用来控制每次
 	Uint32			   audio_len;			// 用来控制
 
